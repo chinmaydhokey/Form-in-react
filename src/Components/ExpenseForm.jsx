@@ -1,5 +1,7 @@
 import React, { use, useEffect, useRef, useState } from "react";
 import "./../App.css";
+import Input from "./Input";
+import Select from "./Select";
 
 function ExpenseForm({ setExpenses }) {
   // const [title,setTitle] = useState('')
@@ -9,9 +11,11 @@ function ExpenseForm({ setExpenses }) {
     title: "",
     category: "",
     amount: "",
+    id: crypto.randomUUID(),
   });
 
-  
+  const [errors, setErrors] = useState({});
+
   // let myNum = 0
   // let myRef = useRef(myNum)
 
@@ -36,9 +40,15 @@ function ExpenseForm({ setExpenses }) {
     // setExpense((prev)=>[...prev, {...getFormData(e.target),id:crypto.randomUUID()}])
     // e.target.reset()
     //---------------------------------------------
-    console.log(expense)
+
+    const validateResult = validate(expense);
+    console.log("Object.keys(validateResult) ", Object.keys(validateResult));
+
+    if (Object.keys(validateResult).length) return;
+
     setExpenses((prevState) => [
-      ...prevState,{...expense, id: crypto.randomUUID()}
+      ...prevState,
+      { ...expense, id: crypto.randomUUID() },
     ]);
   };
 
@@ -57,61 +67,65 @@ function ExpenseForm({ setExpenses }) {
   //   console.log(categoryRef)
   // })
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setExpense((prevState) => ({
+      ...prevState,
+      [name]: e.target.value,
+    }));
+  };
+
+  const validate = (formData) => {
+    let errorData = {};
+
+    if (!formData.title) {
+      errorData.title = "Title is required";
+    }
+    if (!formData.category) {
+      errorData.category = "Category is required";
+    }
+    if (!formData.amount) {
+      errorData.amount = "Amount is required";
+    }
+
+    console.log("formData ", formData);
+    setErrors(errorData);
+
+    return errorData;
+  };
+
   return (
     <div>
       <form className="expense-form" onSubmit={handleSubmit}>
         <div className="input-container">
-          <label for="title">Title</label>
-          <input
+          <Input
+            label="Title"
             id="title"
             name="title"
             value={expense.title}
-            onChange={(e) =>
-              setExpense((prevState) => ({
-                ...prevState,
-                title: e.target.value,
-              }))
-            }
-            // ref={titleRef}
-            />
+            onChange={handleChange}
+            error={errors.title}
+          />
         </div>
         <div className="input-container">
-          <label for="category">Category</label>
-          <select
-            id="category"
-            name="category"
-            value={expense.category}
-            onChange={(e) =>
-              setExpense((prevState) => ({
-                ...prevState,
-                category: e.target.value,
-              }))
-            }
-            // ref={categoryRef}
-            >
-            <option value="" hidden>
-              All
-            </option>
-            <option value="grocery">Grocery</option>
-            <option value="clothes">Clothes</option>
-            <option value="bills">Bills</option>
-            <option value="education">Education</option>
-            <option value="medicine">Medicine</option>
-          </select>
+          <Select
+          label="Category"
+          id="category"
+          name="category"
+          value={expense.category}
+          onChange={handleChange}
+          options={['Grocery', 'Clothes', 'Bills', 'Education']}
+          error={errors.category}
+          />
         </div>
         <div className="input-container">
-          <label for="amount">Amount</label>
-          <input
+          <Input
+            label="Amount"
             id="amount"
             name="amount"
             value={expense.amount}
-            onChange={(e) =>
-              setExpense((prevState) => ({
-                ...prevState,
-                amount: e.target.value,
-              }))
-            }
-            // ref={amountRef}
+            onChange={handleChange}
+            error={errors.amount}
           />
         </div>
         <button className="add-btn">Add</button>

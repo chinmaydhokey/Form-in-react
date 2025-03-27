@@ -2,7 +2,7 @@ import React from 'react'
 import "./../App.css"
 
 function ExpenseTable({expenses}) {
-    console.log("here",expenses)
+    // console.log("here",expenses)
   return (
     <div>
         <table className="expense-table">
