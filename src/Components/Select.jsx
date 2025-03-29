@@ -1,6 +1,6 @@
 import React from "react";
 
-function Select({ label, id, name, value, onChange, options, error }) {
+function Select({ label, id, name, value, onChange, options,defaultOption, error }) {
   return (
     <div className="input-container">
       <label htmlFor={id}>{label}</label>
@@ -12,7 +12,7 @@ function Select({ label, id, name, value, onChange, options, error }) {
         // ref={categoryRef}
       >
         <option value="" hidden>
-          All
+          {defaultOption}
         </option>
         {options.map((option,i) => (
           <option value={option.value} key={i}> {option} </option>
