@@ -24,7 +24,8 @@ main {
 }
 
 .expense-table {
-  width: 100%;
+  /* width: 100%; */
+  height: fit-content;
   border-collapse: collapse;
 }
 
@@ -98,14 +99,14 @@ main {
   background-color: white;
   border: 1px solid;
   position: absolute;
-  display: none;
+  width: fit-content;
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
 }
 
 .context-menu div {
-  padding: 2px 8px;
+  padding: 4px 4px;
   cursor: pointer;
   font-weight: 600;
 }
@@ -117,6 +118,10 @@ main {
 #category {
   height: 28px;
   font-family: inherit;
+}
+
+.clear-sort{
+  cursor: pointer;
 }
 
 @media (max-width: 900px) {

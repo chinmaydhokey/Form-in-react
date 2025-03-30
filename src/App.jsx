@@ -1,40 +1,63 @@
-import { useEffect, useState } from 'react'
-import ExpenseForm from './Components/ExpenseForm'
-import ExpenseTable from './Components/ExpenseTable'
-import './App.css'
-import expenseData from '../../expenseData'
+import { useEffect, useState } from "react";
+import ExpenseForm from "./Components/ExpenseForm";
+import ExpenseTable from "./Components/ExpenseTable";
+import "./App.css";
+import expenseData from "../../expenseData";
 
 function App() {
-  const [expenses, setExpenses] = useState(expenseData)  
-  const optionsData=["Grocery", "Clothes", "Bills", "Education"]
-  const [filterOption, setFilterOption] = useState()
-  const [filteredArray, setFilteredArray] = useState(expenses)
+  const [expenses, setExpenses] = useState(expenseData);
+  const [filterOption, setFilterOption] = useState("All");
+  const [filteredArray, setFilteredArray] = useState(expenses);
+  const [rowId, setRowID] = useState('')
+  const [expense, setExpense] = useState({
+    title: "",
+    category: "",
+    amount: "",
+  });
 
-  useEffect(()=>{
-    console.log("Filter Option:", filterOption);
-  console.log("Expenses:", expenses);
-    if(filterOption !== ''){
-      setFilteredArray(expenses.filter((e)=> e.category == filterOption))
-    }else {
-      setFilteredArray(expenses)
+  const [editingRowId, setEditingRowId] = useState('');
+
+  useEffect(() => {
+    if (filterOption === "All") {
+      setExpenses(expenses);
     }
-  },[filterOption,expenses])
+    if (filterOption !== "") {
+      setFilteredArray(expenses.filter((e) => e.category == filterOption));
+    } else {
+      setFilteredArray(expenses);
+    }
+  }, [filterOption, expenses]);
 
   return (
     <>
       <main>
-      <h1>Track Your Expense</h1>
-      <div className="expense-tracker">
-      <ExpenseForm setExpenses={setExpenses} />
-      <ExpenseTable filteredArray={filteredArray} setExpenses={setExpenses} optionsData={optionsData} filterOption={filterOption} setFilterOption = {setFilterOption} />
-        <div className="context-menu">
-            <div>Edit</div>
-            <div>Delete</div>
+        <h1>Track Your Expense</h1>
+        <div className="expense-tracker">
+          <ExpenseForm
+            expense={expense}
+            setExpense={setExpense}
+            setExpenses={setExpenses}
+            editingRowId={editingRowId}
+            setEditingRowId={setEditingRowId}
+            />
+          <ExpenseTable
+            expense={expense}
+            setExpense={setExpense}
+            filteredArray={filteredArray}
+            setFilteredArray={setFilteredArray}
+            expenses={expenses}
+            setExpenses={setExpenses}
+            filterOption={filterOption}
+            setFilterOption={setFilterOption}
+            editingRowId={editingRowId}
+            setEditingRowId={setEditingRowId}
+            rowId={rowId}
+            setRowID={setRowID}
+          />
         </div>
-      </div>
-    </main>
+      </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,37 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import "./../App.css";
 import Input from "./Input";
 import Select from "./Select";
 
-function ExpenseForm({setExpenses }) {
-
-  const [expense, setExpense] = useState({
-    title: "",
-    category: "",
-    amount: "",
-  });
-
+function ExpenseForm({ expense, setExpense, setExpenses, editingRowId, setEditingRowId }) {
   const [errors, setErrors] = useState({});
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const validateResult = validate(expense);
-    if (Object.keys(validateResult).length) return;
-
-    setExpenses((prevState) => [
-      ...prevState,
-      { id: crypto.randomUUID(), ...expense },
-    ]);
-  };
-
-  const handleChange = (e) => {
-    const { name } = e.target;
-    setExpense((prevState) => ({
-      ...prevState,
-      [name]: e.target.value,
-    }));
-  };
+  console.log(editingRowId)
 
   const validateConfig = {
     title: [
@@ -50,22 +24,67 @@ function ExpenseForm({setExpenses }) {
       validateConfig[key].some((rule) => {
         if (rule.required && !value) {
           errorData[key] = rule.message;
-          return true
+          return true;
         }
         if (rule.minLength && value.length < 5) {
           errorData[key] = rule.message;
-          return true
+          return true;
         }
-        
-        if(rule.pattern && !rule.pattern.test(value)){
-          errorData[key] = rule.message
-          return true
+
+        if (rule.pattern && !rule.pattern.test(value)) {
+          errorData[key] = rule.message;
+          return true;
         }
       });
     });
     setErrors(errorData);
 
     return errorData;
+  };
+
+  const handleChange = (e) => {
+    const { name } = e.target;
+    setExpense((prevState) => ({
+      ...prevState,
+      [name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const validateResult = validate(expense);
+    if (Object.keys(validateResult).length) return;
+
+    if(editingRowId){
+      setExpenses((prevState)=>
+        prevState.map((prevExpense)=>{
+          if(expense.id === editingRowId){
+            // console.log(expense)
+              return {...expense, id:editingRowId}
+          }
+          return prevExpense
+        })
+      )
+      setExpense({
+        title: "",
+        category: "",
+        amount: "",
+      })
+      setEditingRowId('')
+      return
+    }
+
+    setExpenses((prevState) => 
+      [...prevState,
+      { id: crypto.randomUUID(), ...expense },]
+
+    );
+    setExpense({
+      title: "",
+      category: "",
+      amount: "",
+    })
   };
 
   return (
@@ -103,7 +122,7 @@ function ExpenseForm({setExpenses }) {
             error={errors.amount}
           />
         </div>
-        <button className="add-btn">Add</button>
+        <button className="add-btn">{editingRowId ? 'Save' : 'Add'}</button>
       </form>
     </div>
   );
